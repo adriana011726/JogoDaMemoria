@@ -1,156 +1,117 @@
-let order = [];
-let clickedOrder = [];
-let score = 0;
-
-/*
-/ ordem das cores:
-/ 0 => verde
-/ 1 => vermelho
-/ 2 => azul
-/ 3 => amarelo
-*/
+let orderColor;
+let orderPressed;
+let round;
+let score;
+let level;
 
 const green = document.querySelector('.green');
-const red = document.querySelector('.red');
 const blue = document.querySelector('.blue');
 const yellow = document.querySelector('.yellow');
+const red = document.querySelector('.red');
 
-// Cria ordem aleatória de cores
-let shuffleOrder = () => {
+// Evento de cada cor
+green.onclick = () => pressed(0);
+blue.onclick = () => pressed(1);
+yellow.onclick = () => pressed(2);
+red.onclick = () => pressed(3);
 
-    let colorOrder = Math.floor(Math.random() * 4);
-    order[order.length] = colorOrder;
-    clickedOrder = [];
-
-    for(let i in order) {
-
-        let elementColor = createElementColor(order[i]);
-        ligthColor(elementColor, Number(i) + 1);
-    }
-}
-
-// Liga a próxima cor
-let ligthColor = (element, number) => {
-
-    number = number * 500;
-
-    setTimeout( () => {
-
-        element.classList.add('selected');
-    }, number - 250);
-    
-    setTimeout( () => {
-
-        element.classList.remove('selected');
-    }, number);
-}
-
-// Verifica ordem dos botões clicados
-let checkOrder = () => {
-
-    for(let i in clickedOrder) {
-
-        if(clickedOrder[i] != order[i]) {
-
-            loose();
-            break;
-        }
-    }
-
-    if(clickedOrder.length == order.length) {
-
-        alert(`Pontuação ${score}\nVocê acertou! Iniciando próximo nível...`);
-        nextLevel();
-    }
-}
-
-// Atua no click do jogador
-let click = (color) => {
-
-    clickedOrder[clickedOrder.length] = color;
-    createElementColor(color).classList.add('selected');
-
-    setTimeout( () => {
-
-        createElementColor(color).classList.remove('selected');
-
-        checkOrder();
-    }, 250);
-}
-
-// Retorna a cor
-let createElementColor = (color) => {
-
-    if(color == 0) {
-
-        return green;
-    }
-    else if(color == 1) {
-
-        return red;
-    }
-    else if(color == 2) {
-
-        return blue;
-    }
-    else if(color == 3) {
-
-        return yellow;
-    }
-}
-
-// Próximo nível
-let nextLevel = () => {
-
-    score ++;
-    shuffleOrder();
-}
-
-// Game over
-let loose = () => {
-
-    alert(`Pontuação: ${score}\nGame Over!!`);
-
-    order = [];
-    clickedOrder = [];
+let resetGame = (async() => {
+    orderColor = [];
+    orderPressed = [];
+    round = 0;
     score = 0;
+    level = 0;
+});
 
-    playGame();
+// Identifica a jogada do usuário
+let pressed = (async(el) => {
+    orderPressed.push(el);
+    await lightColor(el, 100)
+        .then(checkOrder());
+});
+
+let gameOver = (async() => {
+    document.querySelector('.undercover').style.display = "block";
+    await resetGame();
+});
+
+// Verifica a ordem de cores pressionada pelo player
+let checkOrder = (async() => {
+    let idx = orderPressed.length - 1;
+    if (orderColor[idx] !== orderPressed[idx]) {
+        await gameOver();
+
+    } else {
+        score++;
+        document.getElementById('score').innerHTML = score;
+
+    }
+    if (orderColor.length === orderPressed.length) {
+        setTimeout(() => {
+            nextLevel();
+        }, 1000);
+    }
+});
+
+// Liga a luz da cor
+let turnOff = (element, time) => {
+    let color = element.classList[1];
+    setTimeout(() => {
+        element.classList.remove(`${color}-hover`);
+    }, time);
 }
 
-// Novo jogo
-let playGame = () => {
+// Desliga a luz da cor
+let turnOn = (async(element, time) => {
+    let color = element.classList[1];
+    setTimeout(() => {
+        element.classList.add(`${color}-hover`);
+    }, time);
+})
 
-    alert('Iniciar novo jogo...');
-    score = 0;
-    countDown();
-    setTimeout( () => {
+// Destaca a cor selecionada
+let lightColor = (async(el, time) => {
+    let element = document.getElementsByTagName("DIV")[el];
+    await turnOn(element, 0).then(
+        turnOff(element, time)
+    );
+});
 
-        nextLevel();
-    }, 4000);
-}
+// Cria a sequência de cores
+let shuffle = (async() => {
+    orderPressed = [];
+    let color = Math.floor(Math.random() * 4);
+    orderColor.push(color);
+});
 
-// Contagem regressiva para inicio do jogo
-var count = 4;
-var tempo = document.getElementById("tempo");
+let showColors = () => {
 
-function countDown() {
-     if (count > 0){
-        count -= 1;
-        if (count == 0) {
-            count = "Play Game";
-        }else if(count < 4){
-            count = "0" + count;
-        }
-        tempo.innerText = count;
-        setTimeout(countDown, 1000); 
+    for (let el in orderColor) {
+        setTimeout(async() => {
+            await lightColor(orderColor[el], 1000 - (level * 100));
+        }, (1200 * el + 1500));
     }
 }
 
-// Eventos de click do jogo
-green.onclick = () => click(0);
-red.onclick = () => click(1);
-blue.onclick = () => click(2);
-yellow.onclick = () => click(3);
+let nextLevel = (async() => {
+    if (orderColor.length % 10 === 0) {
+        level++;
+        document.getElementById('level').innerHTML = level;
+    }
+    round++;
+    await shuffle()
+        .then(showColors());
+});
 
-playGame();
+let restart = () => {
+    document.querySelector('.undercover').style.display = "none";
+    document.querySelector('.cover').style.display = "block";
+};
+
+let start = (async() => {;
+    document.querySelector('.cover').style.display = "none";
+    setTimeout(async() => {
+        await resetGame()
+            .then(nextLevel());
+    }, 500);
+});
