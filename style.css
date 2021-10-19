@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+body {
+    margin: 0;
+    background-color: black;
+    font-family: 'Zen Dots', cursive;
+}
+
+header {
+    width: 80%;
+    padding: 25px 10%;
+    color: white;
+    display: inline-flex;
+    justify-content: space-between;
+    align-content: unset;
+}
+
+.cover,
+.undercover {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    position: fixed;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    font-size: 200%;
+    text-align: center;
+    margin: 45vh auto 0;
+}
+
+.cover button {
+    background-color: gold;
+    transform: translate(25%, 10%);
+    width: 180px;
+}
+
+.undercover button {
+    background-color: darkred;
+    color: white;
+    width: 130px;
+}
+
+.cover button,
+.undercover button {
+    position: absolute;
+    padding: 15px 25px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Zen Dots', cursive;
+}
+
+.cover button:hover {
+    background-color: yellow;
+}
+
+.undercover button:hover {
+    background-color: red;
+}
+
+.undercover {
+    display: none;
+}
+
+.container {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: none;
+    grid-template-areas: "green blue" "yellow red";
+    gap: 1vw;
+    width: 51vw;
+    height: 51vw;
+    margin: 5vw auto;
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.content {
+    width: 25vw;
+    height: 25vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.green {
+    background-color: darkgreen;
+    border-radius: 100% 10px 10px 10px;
+}
+
+.green:active,
+.green-hover {
+    background-color: greenyellow;
+    box-shadow: -3px -3px 5px yellowgreen;
+}
+
+.blue {
+    background-color: darkblue;
+    border-radius: 10px 100% 10px 10px;
+}
+
+.blue:active,
+.blue-hover {
+    background-color: cyan;
+    box-shadow: 3px -3px 5px cyan;
+}
+
+.yellow {
+    background-color: rgb(192, 179, 0);
+    border-radius: 10px 10px 10px 100%;
+}
+
+.yellow:active,
+.yellow-hover {
+    background-color: yellow;
+    box-shadow: -3px 3px 5px yellow;
+}
+
+.red {
+    background-color: darkred;
+    border-radius: 10px 10px 100% 10px;
+}
+
+.red:active,
+.red-hover {
+    background-color: red;
+    box-shadow: 3px 3px 5px red;
+}
+
